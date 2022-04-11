@@ -23,7 +23,7 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
-N_sample = 100000
+N_sample = 100
 # patient id
 patient_id = np.linspace(0, N_sample, N_sample).astype(int)
 # age
