@@ -9,7 +9,7 @@ from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import (roc_curve, roc_auc_score, confusion_matrix, accuracy_score, f1_score,
                              precision_recall_curve)
-from mlxtend.plotting import plot_confusion_matrix
+#from mlxtend.plotting import plot_confusion_matrix
 import theano
 import pymc3 as pm
 from pymc3.variational.callbacks import CheckParametersConvergence
@@ -40,7 +40,7 @@ with pm.Model() as logistic_model_pred:
 print(logistic_model_pred.basic_RVs)
 
 with logistic_model_pred:
-    pred_trace = pm.sample(draws=100,
+    pred_trace = pm.sample(draws=1000,
                            tune=100,
                            chains=1,
                            cores=1,
@@ -48,7 +48,7 @@ with logistic_model_pred:
 X_shared.set_value(X_test)
 ppc = pm.sample_posterior_predictive(pred_trace,
                     model=logistic_model_pred,
-                    samples=100)
+                    samples=1000)
 
 #pm.plot_trace(pred_trace)
 #plt.show()
@@ -60,7 +60,7 @@ print("AUC for testset = ", AUC)
 X_shared.set_value(X_train)
 ppc_t = pm.sample_posterior_predictive(pred_trace,
                     model=logistic_model_pred,
-                    samples=100)
+                    samples=1000)
 
 #pm.plot_trace()
 #plt.show()
