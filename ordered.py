@@ -80,30 +80,36 @@ X_shared = theano.shared(X_train.values)
 
 X_train = np.array(X_train)
 nbr_variable = X_train.shape[1]
-with pm.Model() as multinomial:
-    a = pm.Normal("a", mu=0, sigma=10, shape=3)  # intercepts
-    b = pm.Normal("b", mu=0, sigma=15, shape=3)
-    c = pm.Normal("c", mu=0, sigma=15, shape=3)
-    d = pm.Normal("d", mu=0, sigma=15, shape=3)
-    e = pm.Normal("e", mu=0, sigma=15, shape=3)
-    # association of income with choice
-    s0 = a[0] + b[0] * X_shared[:, 0] + c[0] * X_shared[:, 1] + d[0] * X_shared[:, 2] + e[0] * X_shared[:, 3]
-    s1 = a[1] + b[1] * X_shared[:, 0] + c[1] * X_shared[:, 1] + d[1] * X_shared[:, 2] + e[1] * X_shared[:, 3]
-    s2 = a[2] + b[2] * X_shared[:, 0] + c[2] * X_shared[:, 1] + d[2] * X_shared[:, 2] + e[2] * X_shared[:, 3]
-    #s2 = a[2] + np.zeros(X_shared[:, 0].shape[0]) #pivoting the intercept for the third category
-    s = pm.math.stack([s0, s1, s2]).T
-    p_ = tt.nnet.softmax(s)
-    outcome_obs = pm.Categorical("outcome", p=p_, observed=y_train)
+nbr_classes = 3
+with pm.Model() as ordered_multinomial:
 
-    trace_multinomial = pm.sample(draws=4,
+    cutpoints = pm.Normal(
+        "cutpoints",
+        0.0,
+        1.5,
+        transform=pm.distributions.transforms.ordered,
+        shape=nbr_classes,
+        testval=np.arange(nbr_classes) - (nbr_classes-1)/2,
+    )
+    a = pm.Normal("a", mu=0, sigma=10, shape=1)  # intercepts
+    b = pm.Normal("b", mu=0, sigma=15, shape=1)
+    c = pm.Normal("c", mu=0, sigma=15, shape=1)
+    d = pm.Normal("d", mu=0, sigma=15, shape=1)
+    e = pm.Normal("e", mu=0, sigma=15, shape=1)
+    # association of income with choice
+    phi = pm.Deterministic("phi", a[0] + b[0] * X_shared[:, 0] + c[0] * X_shared[:, 1] + d[0] * X_shared[:, 2] + e[0] * X_shared[:, 3])
+
+    outcome = pm.OrderedLogistic("outcome", phi, cutpoints, observed = y_train)
+
+    trace_ordered_multinomial = pm.sample(draws=4,
                            tune=10,
                            chains=2,
                            cores=1,
                            init='adapt_diag')
 
 X_shared.set_value(X_train)
-ppc_t = pm.sample_posterior_predictive(trace_multinomial,
-                    model=multinomial,
+ppc_t = pm.sample_posterior_predictive(trace_ordered_multinomial,
+                    model=ordered_multinomial,
                     samples=10)
 
 y_score = np.round(np.mean(ppc_t['outcome'], axis=0))
@@ -111,8 +117,8 @@ acc = accuracy_score(y_train, y_score)
 print("AUC for trainset = ", acc)
 
 X_shared.set_value(X_test)
-ppc = pm.sample_posterior_predictive(trace_multinomial,
-                    model=multinomial,
+ppc = pm.sample_posterior_predictive(trace_ordered_multinomial,
+                    model=ordered_multinomial,
                     samples=10)
 
 # pm.plot_trace(trace_multinomial)
@@ -121,4 +127,3 @@ y_score = np.round(np.mean(ppc_t['outcome'], axis=0))
 acc = accuracy_score(y_train, y_score)
 print("acc for testset = ", acc)
 #az.summary(trace_multinomial)
-
