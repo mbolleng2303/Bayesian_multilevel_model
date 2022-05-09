@@ -12,7 +12,7 @@ from sklearn.metrics import (roc_curve, roc_auc_score, confusion_matrix, accurac
 
 import pymc3 as pm
 import theano.tensor as tt
-from mlxtend.plotting import plot_confusion_matrix
+#from mlxtend.plotting import plot_confusion_matrix
 import theano
 from pymc3.variational.callbacks import CheckParametersConvergence
 import statsmodels.formula.api as smf
@@ -24,10 +24,10 @@ from IPython.display import HTML
 from Dataset import SimulatedData
 
 SEED = 42
-N_sample = 100
+N_sample = 200
 tune = 1000
 chains = 2
-draws = 500
+draws = 1000
 notice = 'pivoting_intercept'
 model_path = "./simu_" + notice + '_' + str(N_sample) + '_' + str(draws) + '_' + str(tune) + '_' + str(chains) + '/'
 if not os.path.exists(model_path):
