@@ -41,19 +41,19 @@ y = dataset['y'].values
 nbr_classes = dataset.nbr_classes
 with pm.Model() as categorical_model:
     nbr_classes = nbr_classes
-    a = pm.Normal("intercept", mu=0, sigma=50, shape=nbr_classes-1)  # intercepts
-    b = pm.Normal("age", mu=1.25, sigma=0.5, shape=nbr_classes-1)
-    c = pm.Normal("gender", mu=22, sigma=3, shape=nbr_classes-1)
-    d = pm.Normal("smoking", mu=20, sigma=3, shape=nbr_classes-1)
-    e = pm.Normal("fever", mu=34, sigma=3, shape=nbr_classes-1)
-    f = pm.Normal("vomiting", mu=-42, sigma=5, shape=nbr_classes-1)
+    a = pm.Normal("intercept", mu=0, sigma=100, shape=nbr_classes-1)  # intercepts
+    b = pm.Normal("age", mu=0, sigma=10, shape=nbr_classes-1)
+    c = pm.Normal("gender", mu=0, sigma=50, shape=nbr_classes-1)
+    d = pm.Normal("smoking", mu=0, sigma=50, shape=nbr_classes-1)
+    e = pm.Normal("fever", mu=0, sigma=50, shape=nbr_classes-1)
+    f = pm.Normal("vomiting", mu=0, sigma=100, shape=nbr_classes-1)
     s0 = a[0] + b[0] * x[:, 0] + c[0] * x[:, 1] + d[0] * x[:, 2] + e[0] * x[:, 3] + f[
         0] * x[:, 4]
     #s1 = a[1] + b[1] * x[:, 0] + c[1] * x[:, 1] + d[1] * x[:, 2] + e[1] * x[:, 3] + f[
-         # 1] * x[:, 4]
+        #1] * x[:, 4]
     #  s2 = a[2] + b[2] * x[:, 0] + c[2] * x[:, 1] + d[2] * x[:, 2] + e[2] * x[:, 3] + f[2] * x[:, 4]
-    s2 = np.zeros(x[:, 0].shape[0])  #  pivoting the intercept for the third category
-    s = pm.math.stack([s0, s2]).T
+    s2 = np.zeros(x[:, 0].shape[0])#  pivoting the intercept for the third category
+    s = pm.math.stack([s2, s0]).T
     p_ = tt.nnet.softmax(s)
     outcome_obs = pm.Categorical("outcome", p=p_, observed=y)
 
