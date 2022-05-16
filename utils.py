@@ -26,6 +26,7 @@ from Dataset import SimulatedData
 import time
 
 def make_plot(model, trace, true_coeff, model_path, var_names = None):
+
     if not os.path.exists(model_path):
         os.makedirs(model_path)
     print(model.basic_RVs)
@@ -36,7 +37,7 @@ def make_plot(model, trace, true_coeff, model_path, var_names = None):
     az.summary(trace).to_csv(model_path + 'trace.csv')
     print(az.summary(trace))
 
-    az.plot_pair(trace, kind=["scatter", "kde"], point_estimate="median", var_names= var_names)
+    az.plot_pair(trace, kind=["scatter", "kde"], point_estimate="median", var_names=var_names)
     plt.savefig(model_path + 'plot_pair')
 
     az.plot_energy(trace)

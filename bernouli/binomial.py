@@ -31,7 +31,7 @@ tune = 100
 chains = 1
 draws = 100
 notice = 'no_missing'
-model_path = "./result/binomial_" + time.strftime('%Hh%Mm%Ss_on_%b_%d_%Y') + notice + '_' + str(N_sample) + '_' + str(draws) + '_' + str(tune) + '_' + str(chains) + '/'
+model_path = "./result/binomial_" + time.strftime('%Hh%Mm_%m_%d_%y') + '_' + notice + '_' + str(N_sample) + '_' + str(draws) + '_' + str(tune) + '_' + str(chains) + '/'
 if not os.path.exists(model_path):
     os.makedirs(model_path)
 print(model_path)
@@ -45,18 +45,18 @@ nbr_classes = dataset.nbr_classes
 labels = dataset['x'].columns
 with pm.Model() as binomial_model:
     # pm.glm.GLM(x=x, labels=labels, y=y, family=pm.glm.families.Binomial())
-    '''a = pm.Normal("intercept", mu=true_coeff[0], sigma=5)  # intercepts
+    a = pm.Normal("intercept", mu=true_coeff[0], sigma=5)  # intercepts
     b = pm.Normal("age", mu=true_coeff[1], sigma=5)
     c = pm.Normal("gender", mu=true_coeff[2], sigma=5)
     d = pm.Normal("smoking", mu=true_coeff[3], sigma=5)
     e = pm.Normal("fever", mu=true_coeff[4], sigma=5)
-    f = pm.Normal("vomiting", mu=true_coeff[5], sigma=5)'''
-    a = pm.Normal("intercept", mu=0, sigma=100)  # intercepts
+    f = pm.Normal("vomiting", mu=true_coeff[5], sigma=5)
+    '''a = pm.Normal("intercept", mu=0, sigma=100)  # intercepts
     b = pm.Normal("age", mu=0, sigma=10)
     c = pm.Normal("gender", mu=0, sigma=50)
     d = pm.Normal("smoking", mu=0, sigma=50)
     e = pm.Normal("fever", mu=0, sigma=50)
-    f = pm.Normal("vomiting", mu=0, sigma=50)
+    f = pm.Normal("vomiting", mu=0, sigma=100)'''
     phi = a + b * x[:, 0] + c * x[:, 1] + d * x[:, 2] + e * x[:, 3] + f * x[:, 4]
     logit = pm.invlogit(phi)
     pm.Bernoulli(name='logit', p=logit, observed=y)

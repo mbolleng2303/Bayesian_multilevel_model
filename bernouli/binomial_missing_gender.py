@@ -33,7 +33,7 @@ tune = 30
 chains = 1
 draws = 30
 notice = 'missing_gender'
-model_path = "./result/binomial" + "_" + time.strftime('%Hh%Mm_%D') + '_' +notice + '_' + str(N_sample) + '_' + str(draws) + '_' + str(tune) + '_' + str(chains) + '/'
+model_path = "./result/binomial" + "_" + time.strftime('%Hh%Mm_%m/%d/%y') + '_' +notice + '_' + str(N_sample) + '_' + str(draws) + '_' + str(tune) + '_' + str(chains) + '/'
 if not os.path.exists(model_path):
     os.makedirs(model_path)
 np.random.seed(SEED)
@@ -61,7 +61,7 @@ with pm.Model() as binomial_model:
     d = pm.Normal("smoking", mu=true_coeff[3], sigma=5)
     e = pm.Normal("fever", mu=true_coeff[4], sigma=5)
     f = pm.Normal("vomiting", mu=true_coeff[5], sigma=5)
-    '''a = pm.Normal("intercept", mu=0, sigma=200)  # intercepts
+    '''a = pm.Normal("intercept", mu=0, sigma=100)  # intercepts
     b = pm.Normal("age", mu=0, sigma=10)
     c = pm.Normal("gender", mu=0, sigma=50)
     d = pm.Normal("smoking", mu=0, sigma=50)

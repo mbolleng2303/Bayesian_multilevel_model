@@ -11,7 +11,7 @@ class SimulatedData:
         self.path = '../data/'
         self.type = outcome
         self.N = n_sample
-        self.prob = np.reshape(np.array([[0.45, 0.55], [0.3, 0.3, 0.3, 0.1], [0.2, 0.8], [0.7, 0.3]]), (4, -1))
+        self.prob = np.reshape(np.array([[0.50, 0.50], [0.3, 0.3, 0.3, 0.1], [0.2, 0.8], [0.7, 0.3]]), (4, -1))
         self.age = np.random.uniform(35, 70, n_sample).astype(int)
         self.gender = np.random.choice([0, 1], n_sample, p=self.prob[0, 0])
         self.smoking = np.random.choice([0, 5, 6, 7], n_sample, p=self.prob[1, 0])# [0, 5, 6, 7]
@@ -36,7 +36,7 @@ class SimulatedData:
         df = pd.DataFrame(self.data,
                           columns=['age', 'gender', 'smoking', 'fever', 'vomiting', 'outcome'])
         df.to_csv(self.path+'data.csv', index=False)
-        self.data = pd.read_csv('data.csv')
+        self.data = pd.read_csv(self.path+'data.csv')
         self.data.info()
         self.data.head()
 

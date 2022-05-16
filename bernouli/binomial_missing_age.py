@@ -34,7 +34,7 @@ tune = 30
 chains = 1
 draws = 30
 notice = 'missing_age'
-model_path = "./result/binomial_" + "_" + time.strftime('%Hh%Mm%Ss_on_%b_%d_%Y') + '_' + notice + '_' + str(N_sample) + '_' + str(draws) + '_' + str(tune) + '_' + str(chains) + '/'
+model_path = "./result/binomial_" + "_" + time.strftime('%Hh%Mm_%m/%d/%y') + '_' + notice + '_' + str(N_sample) + '_' + str(draws) + '_' + str(tune) + '_' + str(chains) + '/'
 if not os.path.exists(model_path):
     os.makedirs(model_path)
 np.random.seed(SEED)
@@ -54,7 +54,7 @@ idx_missing = np.where(x[:, 0] == -1)
 idx_not_missing = np.where(x[:, 0] != -1)
 
 with pm.Model() as binomial_model:
-    v = pm.Uniform(name="age_estimation", lower=35, upper=70, shape=np.array(idx_missing).shape[1])
+    v = pm.Uniform(name="age_estimation", lower=x[idx_not_missing, 0].min(), upper=x[idx_not_missing, 0].max(), shape=np.array(idx_missing).shape[1])
     #  pm.glm.GLM(x=x, labels=labels,y=y, family=pm.glm.families.Binomial())
     a = pm.Normal("intercept", mu=true_coeff[0], sigma=5)  # intercepts
     b = pm.Normal("age", mu=true_coeff[1], sigma=5)
@@ -62,7 +62,7 @@ with pm.Model() as binomial_model:
     d = pm.Normal("smoking", mu=true_coeff[3], sigma=5)
     e = pm.Normal("fever", mu=true_coeff[4], sigma=5)
     f = pm.Normal("vomiting", mu=true_coeff[5], sigma=5)
-    '''a = pm.Normal("intercept", mu=0, sigma=200)  # intercepts
+    '''a = pm.Normal("intercept", mu=0, sigma=100)  # intercepts
     b = pm.Normal("age", mu=0, sigma=10)
     c = pm.Normal("gender", mu=0, sigma=50)
     d = pm.Normal("smoking", mu=0, sigma=50)
